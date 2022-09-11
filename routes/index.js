@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const template = require("../lib/template");
+import * as template from "../lib/template.js";
 
 router.get("/", (req, res) => {
   const title = "Welcome";
@@ -19,4 +19,4 @@ router.get("/", (req, res) => {
   res.send(html);
 });
 
-module.exports = router;
+export default router;

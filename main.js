@@ -1,24 +1,31 @@
-const express = require("express");
+import express from "express";
 const app = express();
 const port = 3000;
 
-const fs = require("fs");
-const bodyParser = require("body-parser");
-const compression = require("compression");
-const helmet = require("helmet");
-app.use(helmet);
+import { promises as fs } from "fs";
 
-const topicRouter = require("./routes/topic");
-const indexRouter = require("./routes/index");
+import bodyParser from "body-parser";
+import compression from "compression";
+
+// const helmet = require("helmet");
+// app.use(helmet);
+
+import indexRouter from "./routes/index.js";
+import topicRouter from "./routes/topic.js";
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compression());
 app.get("*", (req, res, next) => {
-  fs.readdir("./data", function (error, filelist) {
-    req.list = filelist;
-    next();
-  });
+  async function getList() {
+    try {
+      req.list = await fs.readdir("./data");
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+  getList();
 });
 
 app.use("/", indexRouter);
